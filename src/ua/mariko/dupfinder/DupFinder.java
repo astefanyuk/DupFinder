@@ -2,6 +2,7 @@ package ua.mariko.dupfinder;
 
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 public class DupFinder {
 
@@ -56,6 +59,8 @@ public class DupFinder {
 	public static void main(String[] args) {
 
 		File root = null;
+		FileFilter filter = null;
+		
 		Boolean deleteDuplicated = false;
 
 		for (int i = 0; i < args.length; i++) {
@@ -69,7 +74,13 @@ public class DupFinder {
 			} else if (s.equals("-d")) {
 
 				deleteDuplicated = true;
+				
+			} else if (s.equals("-m")) {
+
+				++i;
+				filter = new WildcardFileFilter(args[i].replace("\'",""));
 			}
+
 
 		}
 		
@@ -79,6 +90,7 @@ public class DupFinder {
 			
 			System.out.println("Usage: DupFinder [options] DIRECTORY");
 			System.out.println(" -d                                   delete duplicated files");
+			System.out.println(" -m                                   filter mask");
 
 			pressAnyKey();
 
@@ -90,7 +102,7 @@ public class DupFinder {
 		HashSet<File> filesHash = new HashSet<>();
 
 		// load all files
-		findFiles(root, filesHash, true);
+		findFiles(root, filesHash, true, filter);
 
 		int duplicateCount = 0;
 		long sizeDeleted = 0l;
@@ -271,7 +283,7 @@ public class DupFinder {
 		return sb.toString();
 	}
 
-	private static void findFiles(File file, HashSet<File> filesHash, boolean ignoreHidden) {
+	private static void findFiles(File file, HashSet<File> filesHash, boolean ignoreHidden, java.io.FileFilter fileFilter) {
 		
 		if(!file.exists() || !file.canRead()){
 			return;
@@ -284,13 +296,13 @@ public class DupFinder {
 
 		if (file.isDirectory()) {
 
-			File files[] = file.listFiles();
+			File files[] = file.listFiles(fileFilter);
 
 			if (files != null && files.length > 0) {
 
 				for (File f : files) {
 
-					findFiles(f, filesHash, false);
+					findFiles(f, filesHash, false, fileFilter);
 				}
 			}
 		} else {
