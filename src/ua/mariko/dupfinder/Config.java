@@ -10,6 +10,8 @@ public class Config {
 	public File root;
 	public FileFilter filter;
 	public boolean deleteDuplicated;
+	public boolean byName;
+	public boolean silent;
 	
 	public static Config readParameters(String[] args){
 		
@@ -23,16 +25,25 @@ public class Config {
 
 				config.root = new File(args[i].replace("\'",""));
 
+			} else if (s.equals("-ds")) {
+
+				config.deleteDuplicated = true;
+				config.silent = true;
+				
 			} else if (s.equals("-d")) {
 
 				config.deleteDuplicated = true;
-				
+			
 			} else if (s.equals("-m")) {
 
 				++i;
 				config.filter = new WildcardFileFilter(args[i].replace("\'",""));
-			}
+				
+			} else if (s.equals("-n")) {
 
+				++i;
+				config.byName = true;
+			} 
 
 		}
 		

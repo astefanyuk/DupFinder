@@ -27,7 +27,9 @@ public class DupFinderMain {
 			
 			System.out.println("Usage: DupFinder [options] DIRECTORY");
 			System.out.println(" -d                                   delete duplicated files");
+			System.out.println(" -ds                                  delete duplicated file silent");
 			System.out.println(" -m                                   filter mask");
+			System.out.println(" -n                                   file name should be equal");
 
 			pressAnyKey();
 

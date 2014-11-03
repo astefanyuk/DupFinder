@@ -2,6 +2,9 @@ package ua.mariko.dupfinder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
@@ -9,17 +12,25 @@ public class FileInfo {
 	public final File file;
 	private long hash;
 	private final static long INVALID_HASH = Long.MAX_VALUE;
+	private Config config;
+	
+	public List<FileInfo> subItems = new ArrayList<FileInfo>();
 
-	public FileInfo(File file) {
+	public FileInfo(File file, Config config) {
 		this.file = file;
+		this.config = config;
 	}
 	
 	private boolean isValidHash(){
 		return hash != INVALID_HASH && this.hash!= 0l;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
+	
+	public String getDetailedFileInfo(){
+		return file.getAbsolutePath() + " Size=" + DupFinderInfo.formatBytes(file.length()) + " Modified Date=" + new Date(file.lastModified());
+	}
+	
+	
+	public boolean sameFile(Object obj) {
 
 		FileInfo fileInfo = (FileInfo) obj;
 		
@@ -33,6 +44,12 @@ public class FileInfo {
 			}
 		} catch (IOException ex) {
 			return false;
+		}
+		
+		if(this.config.byName){
+			if(!fileInfo.file.getName().equals(this.file.getName())){
+				return false;
+			}
 		}
 		
 		this.calculateHash();
