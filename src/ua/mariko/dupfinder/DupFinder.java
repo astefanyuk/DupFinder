@@ -71,10 +71,45 @@ public class DupFinder {
 	}
 
 	public void findDuplicatedFiles() {
+		
+		List<Long> keys = new ArrayList<>(hashTable.keySet());
+		
+		if(!config.searchSmallFirst.equals(Config.Sort.None)){
+			
+			if(config.searchSmallFirst.equals(Config.Sort.Large) || config.searchSmallFirst.equals(Config.Sort.Small)){
+			
+				Collections.sort(keys, new Comparator<Long>() {
 
-		for (Long key : hashTable.keySet()) {
+					@Override
+					public int compare(Long o1, Long o2) {
+
+						if(config.searchSmallFirst.equals(Config.Sort.Large)){
+							return o1.compareTo(o2);
+						}else if(config.searchSmallFirst.equals(Config.Sort.Small)){
+							return o2.compareTo(o1);
+						}
+						
+						return 0;
+					}});
+			}
+			
+		}
+		
+		int percentDone = 0;
+		
+		
+		for (int i=0; i<keys.size(); i++) {
+			
+			Long key = keys.get(i);
 
 			findDuplicatedFiles(hashTable.get(key));
+			
+			int newPercent = (int)( (i +1) * 100.0f / keys.size());
+			
+			if(newPercent  != percentDone){
+				percentDone = newPercent;
+				System.out.println("Done " + percentDone + "%");
+			}
 		}
 
 		logDone();
@@ -107,16 +142,17 @@ public class DupFinder {
 
 		for (FileInfo fileInfo : list) {
 
-			if (!fileInfo.subItems.isEmpty()) {
+			if (fileInfo.subItems.size() >1) {
 			
-				//sort items
+				//sort items by full path
 				Collections.sort(fileInfo.subItems, new Comparator<FileInfo>() {
 
 					@Override
 					public int compare(FileInfo arg0, FileInfo arg1) {
-						return arg0.file.getAbsolutePath().compareTo(arg1.file.getAbsolutePath());
-					}});
-				
+						return arg0.file.getAbsolutePath().compareTo(
+								arg1.file.getAbsolutePath());
+					}
+				});				
 				
 
 				if (!config.deleteDuplicated) {
@@ -132,7 +168,7 @@ public class DupFinder {
 							info.sizeDeleted += fi.file.length();
 						}else{
 							System.out.println("");
-							System.out.println("###########");
+							System.out.println("########### " + " Count=" +  (fileInfo.subItems.size()) + " Total size=" + DupFinderInfo.formatBytes(fileInfo.subItems.size() * fileInfo.file.length()));
 							System.out.println("Orinal File: " + fi.getDetailedFileInfo());
 						}
 
@@ -147,11 +183,11 @@ public class DupFinder {
 				if (!config.silent) {
 				
 					System.out.println();
-					System.out.println("###########");
+					System.out.println("########### " + " Count=" +  (fileInfo.subItems.size()) + " Total size=" + DupFinderInfo.formatBytes(fileInfo.subItems.size() * fileInfo.file.length()));
 
 					System.out.println("Please select which file should be NOT deleted");
 							
-					System.out.println("0 - do not delete any file");
+					System.out.println("0. Do NOT delete any file");
 
 					for (int i = 0; i < fileInfo.subItems.size(); i++) {
 
@@ -171,15 +207,19 @@ public class DupFinder {
 				List<FileInfo> listNotDeleted = new ArrayList<>();
 
 				for (String v : value) {
+					
+					if(!"".equals(v)){
+					
+						int index = Integer.parseInt(v) - 1;
 
-					int index = Integer.parseInt(v) - 1;
+						if (index < 0 || index >= fileInfo.subItems.size()) {
+							continue;
+						}
 
-					if (index < 0 || index >= fileInfo.subItems.size()) {
-						continue;
+						listNotDeleted.add(fileInfo.subItems.get(index));
+
 					}
-
-					listNotDeleted.add(fileInfo.subItems.get(index));
-
+					
 				}
 
 				if (!listNotDeleted.isEmpty()) {

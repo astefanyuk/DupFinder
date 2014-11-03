@@ -3,15 +3,23 @@ package ua.mariko.dupfinder;
 import java.io.File;
 import java.io.FileFilter;
 
+import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 public class Config {
 
 	public File root;
-	public FileFilter filter;
+	public WildcardFileFilterEx filter;
 	public boolean deleteDuplicated;
 	public boolean byName;
 	public boolean silent;
+	public Sort searchSmallFirst = Sort.None;
+	
+	public static enum Sort{
+		None,
+		Small,
+		Large
+	}
 	
 	public static Config readParameters(String[] args){
 		
@@ -37,7 +45,7 @@ public class Config {
 			} else if (s.equals("-m")) {
 
 				++i;
-				config.filter = new WildcardFileFilter(args[i].replace("\'",""));
+				config.filter = new WildcardFileFilterEx(args[i].replace("\'",""), IOCase.INSENSITIVE);
 				
 			} else if (s.equals("-n")) {
 

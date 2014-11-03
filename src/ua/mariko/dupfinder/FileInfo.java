@@ -26,7 +26,7 @@ public class FileInfo {
 	}
 	
 	public String getDetailedFileInfo(){
-		return file.getAbsolutePath() + " Size=" + DupFinderInfo.formatBytes(file.length()) + " Modified Date=" + new Date(file.lastModified());
+		return file.getAbsolutePath() + " Size=" + DupFinderInfo.formatBytes(file.length()) + " Modified Date=" + new Date(file.lastModified()) + " CRC32=" + this.hash;
 	}
 	
 	
