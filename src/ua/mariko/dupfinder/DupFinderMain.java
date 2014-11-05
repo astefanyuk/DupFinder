@@ -1,17 +1,7 @@
 package ua.mariko.dupfinder;
 
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 public class DupFinderMain {
 	
@@ -23,9 +13,9 @@ public class DupFinderMain {
 		
 		System.out.println("DupFinder is a program to find duplicated files in the directory specified");
 		
-		if (dupFinder.config.root == null) {
+		if (dupFinder.config.files.isEmpty()) {
 			
-			System.out.println("Usage: DupFinder [options] DIRECTORY");
+			System.out.println("Usage: DupFinder [options] DIRECTORY [DIRECTORYN..]");
 			System.out.println(" -d                                   delete duplicated files");
 			System.out.println(" -ds                                  delete duplicated files. Silent mode");
 			System.out.println(" -m                                   filter mask. Example: *.jpg");

@@ -2,13 +2,14 @@ package ua.mariko.dupfinder;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 public class Config {
 
-	public File root;
+	public List<File> files = new ArrayList<>();
 	public WildcardFileFilterEx filter;
 	public boolean deleteDuplicated;
 	public boolean byName;
@@ -31,7 +32,7 @@ public class Config {
 
 			if (!s.trim().startsWith("-")) {
 
-				config.root = new File(args[i].replace("\'",""));
+				config.files.add(new File(args[i].replace("\'","")));
 
 			} else if (s.equals("-ds")) {
 

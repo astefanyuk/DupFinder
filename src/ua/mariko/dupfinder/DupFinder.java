@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -21,18 +20,21 @@ public class DupFinder {
 
 	public void loadFiles() {
 
-		System.out.println("Searching in " + config.root.getAbsolutePath());
-
 		HashSet<File> filesHash = new HashSet<>();
-
-		// load all files
-		findFiles(config.root, filesHash, true, config.filter);
-
+		
 		info = new DupFinderInfo();
+		
+		for(File root : config.files){
+		
+			System.out.println("Searching in " + root.getAbsolutePath());
 
-		// split by size
+			// load all files
+			findFiles(root, filesHash, true, config.filter);			
+		}
+		
 		hashTable = new Hashtable<Long, ArrayList<FileInfo>>();
-
+		
+		// split by size
 		for (File file : filesHash) {
 
 			Long size = file.length();
@@ -63,11 +65,12 @@ public class DupFinder {
 				info.possibleDuplicatedFiles += (list.size() - 1);
 				info.possibleDuplicatedFilesSize += (key) * (list.size() - 1);
 			}
-		}
-
+		}		
+		
 		System.out.println("Founded " + info.totalCount
 				+ " files to check. Total size: "
 				+ DupFinderInfo.formatBytes(info.sizeTotal));
+		
 	}
 
 	public void findDuplicatedFiles() {
