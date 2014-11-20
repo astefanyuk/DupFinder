@@ -226,6 +226,8 @@ public class DupFinder {
 				}
 
 				if (!listNotDeleted.isEmpty()) {
+					
+					boolean printentOriginal = false;
 
 					for (int i = 0; i < fileInfo.subItems.size(); i++) {
 
@@ -234,11 +236,17 @@ public class DupFinder {
 							FileInfo fi = fileInfo.subItems.get(i);
 							
 							if (config.deleteDuplicated) {
+								
+								if(!printentOriginal){
+									System.out.println();
+									System.out.println("Original " + listNotDeleted.get(0).getDetailedFileInfo());
+									printentOriginal = true;
+								}
 							
 								++info.duplicateCount;
 								info.sizeDeleted += fi.file.length();
 							
-								System.out.println("Deleted " + fi.file.getAbsolutePath() + " Size=" + DupFinderInfo.formatBytes(fi.file.length()));
+								System.out.println("Deleted " + fi.getDetailedFileInfo());
 							
 								fi.file.delete();
 								

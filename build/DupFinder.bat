@@ -1,1 +1,2 @@
-java -jar DupFinder.jar 'd:\' -m '*.*'
+java -jar DupFinder.jar 'e:\bbb' -ds
+  
