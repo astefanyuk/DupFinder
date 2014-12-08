@@ -52,7 +52,15 @@ public class Config {
 
 				++i;
 				config.byName = true;
-			} 
+			} else if (s.equals("-az")) {
+
+				++i;
+				config.searchSmallFirst = Sort.Small;
+			} else if (s.equals("-za")) {
+
+				++i;
+				config.searchSmallFirst = Sort.Large;
+			}
 
 		}
 		
